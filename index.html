@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KidsEng - 幼儿园英语启蒙乐园</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <span class="logo-icon">ABC</span>
+            <span class="logo-text">KidsEng</span>
+        </div>
+        <div class="header-title">快乐学英语</div>
+    </div>
+
+    <div class="hero-section">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <h1>欢迎来到英语启蒙乐园!</h1>
+            <p>让宝贝爱上英语的奇妙旅程</p>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="section-title">选择学习乐园</div>
+        
+        <div class="feature-grid">
+            <div class="feature-card letter-card" onclick="navigateTo('letters')">
+                <div class="card-icon letter-icon">
+                    <span>Aa</span>
+                </div>
+                <div class="card-title">字母学习馆</div>
+                <div class="card-desc">认识26个英文字母</div>
+                <div class="card-arrow">→</div>
+            </div>
+
+            <div class="feature-card song-card" onclick="navigateTo('songs')">
+                <div class="card-icon song-icon">
+                    <span>♪</span>
+                </div>
+                <div class="card-title">儿歌磨耳朵</div>
+                <div class="card-desc">欢快的英语儿歌</div>
+                <div class="card-arrow">→</div>
+            </div>
+
+            <div class="feature-card phonics-card" onclick="navigateTo('phonics')">
+                <div class="card-icon phonics-icon">
+                    <span>Ph</span>
+                </div>
+                <div class="card-title">自然拼读营</div>
+                <div class="card-desc">趣味拼读音节</div>
+                <div class="card-arrow">→</div>
+            </div>
+
+            <div class="feature-card game-card" onclick="navigateTo('games')">
+                <div class="card-icon game-icon">
+                    <span>🎮</span>
+                </div>
+                <div class="card-title">亲子互动游戏区</div>
+                <div class="card-desc">边玩边学更快乐</div>
+                <div class="card-arrow">→</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-content">
+            <p>© 2026 KidsEng 幼儿园英语启蒙</p>
+            <p>让每个孩子爱上英语</p>
+        </div>
+    </div>
+
+    <script src="scripts/main.js"></script>
+</body>
+</html>

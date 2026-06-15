@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>听音选图游戏 - KidsEng</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Neue', cursive;
+            background: linear-gradient(180deg, #E8F4FD 0%, #FFF5E6 100%);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #FF6B9D 0%, #C44569 100%);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            background: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: #FF6B9D;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .game-container {
+            padding: 20px;
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .game-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2D3436;
+            margin-bottom: 10px;
+        }
+
+        .listen-box {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .listen-btn {
+            background: linear-gradient(135deg, #00CEC9 0%, #00B894 100%);
+            color: white;
+            border: none;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            font-size: 40px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0, 206, 201, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .listen-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .listen-btn.clicked {
+            animation: pulse 0.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .listen-text {
+            margin-top: 15px;
+            font-size: 16px;
+            color: #636E72;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .option-card {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .option-card.selected {
+            border: 3px solid #00CEC9;
+            background: #E8F8F5;
+        }
+
+        .option-card.correct {
+            background: linear-gradient(135deg, #00CEC9 0%, #00B894 100%);
+            color: white;
+        }
+
+        .option-card.wrong {
+            background: linear-gradient(135deg, #FD79A8 0%, #E84393 100%);
+            color: white;
+        }
+
+        .option-emoji {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        .option-word {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2D3436;
+        }
+
+        .option-card.correct .option-word,
+        .option-card.wrong .option-word {
+            color: white;
+        }
+
+        .back-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #FF6B9D 0%, #C44569 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            box-shadow: 0 5px 20px rgba(255, 107, 157, 0.4);
+            cursor: pointer;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #00CEC9 0%, #00B894 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 206, 201, 0.4);
+            margin-top: 25px;
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00CEC9;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #636E72;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <span class="logo-icon">ABC</span>
+            <span class="logo-text">KidsEng</span>
+        </div>
+        <div style="color: white; font-weight: bold;">听音选图游戏</div>
+    </div>
+
+    <div class="game-container">
+        <div class="game-header">
+            <h1 class="game-title">👂 听音选图游戏</h1>
+            <div class="game-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="score">0</div>
+                    <div class="stat-label">得分</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="level">1</div>
+                    <div class="stat-label">关卡</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="listen-box">
+            <button class="listen-btn" id="listenBtn" onclick="playWord()">🔊</button>
+            <div class="listen-text">点击播放单词发音</div>
+        </div>
+
+        <div class="options-grid" id="optionsGrid"></div>
+
+        <div style="text-align: center;">
+            <button class="next-btn" onclick="nextQuestion()" id="nextBtn" style="display: none;">➡️ 下一题</button>
+        </div>
+    </div>
+
+    <div class="back-btn" onclick="goBack()">←</div>
+
+    <script>
+        const words = [
+            { word: 'apple', emoji: '🍎', options: ['🍎', '🐱', '🐕', '🍌'] },
+            { word: 'cat', emoji: '🐱', options: ['🐕', '🐱', '🐘', '🐟'] },
+            { word: 'dog', emoji: '🐕', options: ['🐟', '🐘', '🐕', '🦋'] },
+            { word: 'fish', emoji: '🐟', options: ['🍎', '🐟', '🦁', '🐱'] },
+            { word: 'bird', emoji: '🐦', options: ['🐦', '🐘', '🐕', '🦋'] },
+            { word: 'lion', emoji: '🦁', options: ['🦁', '🐼', '🐘', '🐟'] },
+            { word: 'panda', emoji: '🐼', options: ['🐱', '🐼', '🦁', '🦋'] },
+            { word: 'elephant', emoji: '🐘', options: ['🐘', '🐕', '🍎', '🐦'] }
+        ];
+
+        let currentIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        function initGame() {
+            currentIndex = 0;
+            score = 0;
+            updateStats();
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = words[currentIndex];
+            answered = false;
+            document.getElementById('nextBtn').style.display = 'none';
+            
+            const grid = document.getElementById('optionsGrid');
+            grid.innerHTML = '';
+            
+            const shuffledOptions = [...question.options].sort(() => Math.random() - 0.5);
+            
+            shuffledOptions.forEach(option => {
+                const card = document.createElement('div');
+                card.className = 'option-card';
+                card.dataset.emoji = option;
+                card.innerHTML = `
+                    <div class="option-emoji">${option}</div>
+                    <div class="option-word">${getWordFromEmoji(option)}</div>
+                `;
+                card.addEventListener('click', () => selectAnswer(card, option === question.emoji));
+                grid.appendChild(card);
+            });
+        }
+
+        function getWordFromEmoji(emoji) {
+            const mapping = {
+                '🍎': 'Apple',
+                '🐱': 'Cat',
+                '🐕': 'Dog',
+                '🐟': 'Fish',
+                '🐦': 'Bird',
+                '🦁': 'Lion',
+                '🐼': 'Panda',
+                '🐘': 'Elephant',
+                '🦋': 'Butterfly',
+                '🍌': 'Banana'
+            };
+            return mapping[emoji] || '?';
+        }
+
+        function selectAnswer(card, isCorrect) {
+            if (answered) return;
+            answered = true;
+
+            const question = words[currentIndex];
+            
+            document.querySelectorAll('.option-card').forEach(c => {
+                if (c.dataset.emoji === question.emoji) {
+                    c.classList.add('correct');
+                } else if (c === card && !isCorrect) {
+                    c.classList.add('wrong');
+                }
+            });
+
+            if (isCorrect) {
+                score += 10;
+                updateStats();
+            }
+
+            setTimeout(() => {
+                document.getElementById('nextBtn').style.display = 'inline-block';
+            }, 500);
+        }
+
+        function playWord() {
+            const btn = document.getElementById('listenBtn');
+            btn.classList.add('clicked');
+            
+            const word = words[currentIndex].word;
+            
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8;
+                utterance.onend = () => {
+                    btn.classList.remove('clicked');
+                };
+                window.speechSynthesis.speak(utterance);
+            } else {
+                setTimeout(() => btn.classList.remove('clicked'), 1000);
+            }
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            if (currentIndex >= words.length) {
+                alert(`🎉 恭喜通关！\n\n最终得分：${score} 分！\n\n太厉害了！🌟`);
+                initGame();
+                return;
+            }
+            document.getElementById('level').textContent = currentIndex + 1;
+            showQuestion();
+        }
+
+        function updateStats() {
+            document.getElementById('score').textContent = score;
+        }
+
+        function goBack() {
+            window.location.href = '../games.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>

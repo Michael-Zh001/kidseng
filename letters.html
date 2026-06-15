@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>字母学习馆 - KidsEng</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <span class="logo-icon">ABC</span>
+            <span class="logo-text">KidsEng</span>
+        </div>
+        <div class="header-title">字母学习馆</div>
+    </div>
+
+    <div class="letters-container">
+        <div class="section-header">
+            <div class="card-icon letter-icon">
+                <span>Aa</span>
+            </div>
+            <div>
+                <h2>认识26个英文字母</h2>
+                <p style="color: #636E72; font-size: 14px;">点击字母听发音</p>
+            </div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: 40%"></div>
+        </div>
+
+        <div id="alphabetContainer" class="alphabet-grid"></div>
+    </div>
+
+    <div class="back-btn" onclick="goBack()">←</div>
+
+    <script src="scripts/main.js"></script>
+</body>
+</html>

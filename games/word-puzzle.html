@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>单词拼图游戏 - KidsEng</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Neue', cursive;
+            background: linear-gradient(180deg, #E8F4FD 0%, #FFF5E6 100%);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #FF6B9D 0%, #C44569 100%);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            background: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: #FF6B9D;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .game-container {
+            padding: 20px;
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .game-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2D3436;
+            margin-bottom: 10px;
+        }
+
+        .picture-box {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .picture {
+            font-size: 80px;
+            margin-bottom: 15px;
+        }
+
+        .picture-hint {
+            font-size: 16px;
+            color: #636E72;
+        }
+
+        .puzzle-area {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .answer-slots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            min-height: 80px;
+            padding: 15px;
+            background: #F8F9FA;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        .slot {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #00CEC9 0%, #00B894 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 206, 201, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .slot.empty {
+            background: #E8F4FD;
+            border: 3px dashed #B2BEC3;
+        }
+
+        .slot.dragging {
+            opacity: 0.5;
+        }
+
+        .letters-area {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .letter-btn {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #FD79A8 0%, #E84393 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 4px 12px rgba(253, 121, 168, 0.4);
+            cursor: grab;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .letter-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .letter-btn.dragging {
+            cursor: grabbing;
+            transform: scale(1.1);
+        }
+
+        .letter-btn.used {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .back-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #FF6B9D 0%, #C44569 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            box-shadow: 0 5px 20px rgba(255, 107, 157, 0.4);
+            cursor: pointer;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #00CEC9 0%, #00B894 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 206, 201, 0.4);
+            margin-top: 20px;
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00CEC9;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #636E72;
+        }
+
+        .correct-message {
+            background: linear-gradient(135deg, #00CEC9 0%, #00B894 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .win-stars {
+            font-size: 40px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <span class="logo-icon">ABC</span>
+            <span class="logo-text">KidsEng</span>
+        </div>
+        <div style="color: white; font-weight: bold;">单词拼图游戏</div>
+    </div>
+
+    <div class="game-container">
+        <div class="game-header">
+            <h1 class="game-title">🧩 单词拼图游戏</h1>
+            <div class="game-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="score">0</div>
+                    <div class="stat-label">得分</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="level">1</div>
+                    <div class="stat-label">关卡</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="correctMessage" class="correct-message" style="display: none;">
+            <h3>🎉 太棒了！答对了！</h3>
+            <div class="win-stars">⭐⭐⭐</div>
+        </div>
+
+        <div class="picture-box">
+            <div class="picture" id="picture">🍎</div>
+            <div class="picture-hint" id="hint">提示：这是一种水果...</div>
+        </div>
+
+        <div class="puzzle-area">
+            <div class="answer-slots" id="answerSlots"></div>
+            <div class="letters-area" id="lettersArea"></div>
+        </div>
+
+        <div style="text-align: center;">
+            <button class="next-btn" onclick="nextWord()" id="nextBtn" style="display: none;">➡️ 下一题</button>
+        </div>
+    </div>
+
+    <div class="back-btn" onclick="goBack()">←</div>
+
+    <script>
+        const words = [
+            { emoji: '🍎', word: 'APPLE', hint: '提示：这是一种红色水果...' },
+            { emoji: '🐱', word: 'CAT', hint: '提示：喜欢抓老鼠的小动物...' },
+            { emoji: '🐕', word: 'DOG', hint: '提示：人类最忠诚的朋友...' },
+            { emoji: '🐘', word: 'ELEPHANT', hint: '提示：最大的陆地动物...' },
+            { emoji: '🐟', word: 'FISH', hint: '提示：在水里游泳的动物...' },
+            { emoji: '🦁', word: 'LION', hint: '提示：森林之王...' },
+            { emoji: '🐼', word: 'PANDA', hint: '提示：黑白相间的动物...' },
+            { emoji: '🦋', word: 'BUTTERFLY', hint: '提示：美丽的昆虫...' }
+        ];
+
+        let currentWordIndex = 0;
+        let score = 0;
+        let selectedSlots = [];
+
+        function initGame() {
+            currentWordIndex = 0;
+            score = 0;
+            updateStats();
+            showWord();
+        }
+
+        function showWord() {
+            const word = words[currentWordIndex];
+            document.getElementById('picture').textContent = word.emoji;
+            document.getElementById('hint').textContent = word.hint;
+            document.getElementById('correctMessage').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            selectedSlots = [];
+            
+            createSlots(word.word.length);
+            createLetters(word.word);
+        }
+
+        function createSlots(length) {
+            const slotsContainer = document.getElementById('answerSlots');
+            slotsContainer.innerHTML = '';
+            
+            for (let i = 0; i < length; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'slot empty';
+                slot.dataset.index = i;
+                slotsContainer.appendChild(slot);
+            }
+        }
+
+        function createLetters(word) {
+            const lettersContainer = document.getElementById('lettersArea');
+            lettersContainer.innerHTML = '';
+            
+            const shuffled = word.split('').sort(() => Math.random() - 0.5);
+            
+            shuffled.forEach((letter, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'letter-btn';
+                btn.textContent = letter;
+                btn.dataset.letter = letter;
+                btn.dataset.originalIndex = index;
+                btn.draggable = true;
+                
+                btn.addEventListener('dragstart', handleDragStart);
+                btn.addEventListener('dragend', handleDragEnd);
+                btn.addEventListener('click', () => selectLetter(btn));
+                
+                lettersContainer.appendChild(btn);
+            });
+        }
+
+        function selectLetter(btn) {
+            if (btn.classList.contains('used')) return;
+            
+            const emptySlots = document.querySelectorAll('.slot.empty');
+            if (emptySlots.length === 0) return;
+            
+            const firstEmptySlot = emptySlots[0];
+            const slotIndex = parseInt(firstEmptySlot.dataset.index);
+            
+            firstEmptySlot.textContent = btn.textContent;
+            firstEmptySlot.classList.remove('empty');
+            
+            btn.classList.add('used');
+            
+            selectedSlots.push({
+                slot: firstEmptySlot,
+                letterBtn: btn,
+                letter: btn.dataset.letter,
+                slotIndex: slotIndex
+            });
+            
+            checkAnswer();
+        }
+
+        function checkAnswer() {
+            const word = words[currentWordIndex].word;
+            const slots = document.querySelectorAll('.slot');
+            
+            let isComplete = true;
+            let isCorrect = true;
+            
+            slots.forEach((slot, index) => {
+                if (slot.classList.contains('empty')) {
+                    isComplete = false;
+                    return;
+                }
+                if (slot.textContent !== word[index]) {
+                    isCorrect = false;
+                }
+            });
+            
+            if (isComplete && isCorrect) {
+                setTimeout(() => {
+                    document.getElementById('correctMessage').style.display = 'block';
+                    document.getElementById('nextBtn').style.display = 'inline-block';
+                    score += 10;
+                    updateStats();
+                }, 500);
+            }
+        }
+
+        function nextWord() {
+            currentWordIndex++;
+            if (currentWordIndex >= words.length) {
+                alert(`🎉 恭喜通关！\n\n最终得分：${score} 分！\n\n太厉害了！🌟`);
+                initGame();
+                return;
+            }
+            document.getElementById('level').textContent = currentWordIndex + 1;
+            showWord();
+        }
+
+        function handleDragStart(e) {
+            e.target.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', e.target.dataset.letter);
+            e.dataTransfer.setData('index', e.target.dataset.originalIndex);
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+
+        function updateStats() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('level').textContent = currentWordIndex + 1;
+        }
+
+        function goBack() {
+            window.location.href = '../games.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>

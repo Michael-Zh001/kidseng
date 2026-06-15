@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>连连看游戏 - KidsEng</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Neue', cursive;
+            background: linear-gradient(180deg, #E8F4FD 0%, #FFF5E6 100%);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #FF6B9D 0%, #C44569 100%);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            background: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: #FF6B9D;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .game-container {
+            padding: 20px;
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .game-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2D3436;
+            margin-bottom: 10px;
+        }
+
+        .game-board {
+            background: white;
+            padding: 15px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            max-width: 420px;
+            margin: 0 auto;
+        }
+
+        .link-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+        }
+
+        .link-cell {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #A29BFE 0%, #6C5CE7 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(162, 155, 254, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .link-cell:hover {
+            transform: scale(1.05);
+        }
+
+        .link-cell.selected {
+            background: linear-gradient(135deg, #00CEC9 0%, #00B894 100%);
+            box-shadow: 0 4px 15px rgba(0, 206, 201, 0.5);
+            transform: scale(1.1);
+        }
+
+        .link-cell.matched {
+            opacity: 0.2;
+            pointer-events: none;
+            transform: scale(0.9);
+        }
+
+        .back-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #FF6B9D 0%, #C44569 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            box-shadow: 0 5px 20px rgba(255, 107, 157, 0.4);
+            cursor: pointer;
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00CEC9;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #636E72;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, #00CEC9 0%, #00B894 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 206, 201, 0.4);
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <span class="logo-icon">ABC</span>
+            <span class="logo-text">KidsEng</span>
+        </div>
+        <div style="color: white; font-weight: bold;">连连看游戏</div>
+    </div>
+
+    <div class="game-container">
+        <div class="game-header">
+            <h1 class="game-title">🔗 连连看游戏</h1>
+            <div class="game-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="matches">0</div>
+                    <div class="stat-label">配对</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="time">0</div>
+                    <div class="stat-label">秒</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-board">
+            <div class="link-grid" id="linkGrid"></div>
+        </div>
+
+        <div style="text-align: center;">
+            <button class="restart-btn" onclick="initGame()">🔄 重新开始</button>
+        </div>
+    </div>
+
+    <div class="back-btn" onclick="goBack()">←</div>
+
+    <script>
+        const emojis = ['🍎', '🍌', '🍊', '🍋', '🍇', '🍓', 
+                       '🐱', '🐕', '🐘', '🐟', '🦁', '🐼'];
+
+        let grid = [];
+        let selectedCells = [];
+        let matchedPairs = 0;
+        let timer = 0;
+        let timerInterval = null;
+
+        function initGame() {
+            grid = [];
+            selectedCells = [];
+            matchedPairs = 0;
+            timer = 0;
+            
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            document.getElementById('matches').textContent = '0';
+            document.getElementById('time').textContent = '0';
+            
+            const gameEmojis = [...emojis, ...emojis];
+            gameEmojis.sort(() => Math.random() - 0.5);
+            
+            for (let i = 0; i < 6; i++) {
+                grid[i] = [];
+                for (let j = 0; j < 6; j++) {
+                    grid[i][j] = {
+                        emoji: gameEmojis[i * 6 + j],
+                        matched: false
+                    };
+                }
+            }
+            
+            renderGrid();
+            
+            timerInterval = setInterval(() => {
+                timer++;
+                document.getElementById('time').textContent = timer;
+            }, 1000);
+        }
+
+        function renderGrid() {
+            const gridElement = document.getElementById('linkGrid');
+            gridElement.innerHTML = '';
+            
+            for (let i = 0; i < 6; i++) {
+                for (let j = 0; j < 6; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'link-cell';
+                    if (grid[i][j].matched) {
+                        cell.classList.add('matched');
+                    }
+                    cell.textContent = grid[i][j].emoji;
+                    cell.dataset.row = i;
+                    cell.dataset.col = j;
+                    cell.addEventListener('click', () => selectCell(i, j));
+                    gridElement.appendChild(cell);
+                }
+            }
+        }
+
+        function selectCell(row, col) {
+            if (grid[row][col].matched) return;
+            
+            const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+            
+            if (selectedCells.length === 0) {
+                cell.classList.add('selected');
+                selectedCells.push({ row, col });
+            } else if (selectedCells.length === 1) {
+                const [first] = selectedCells;
+                
+                if (first.row === row && first.col === col) {
+                    document.querySelector(`[data-row="${first.row}"][data-col="${first.col}"]`).classList.remove('selected');
+                    selectedCells = [];
+                    return;
+                }
+                
+                if (grid[first.row][first.col].emoji === grid[row][col].emoji) {
+                    grid[first.row][first.col].matched = true;
+                    grid[row][col].matched = true;
+                    matchedPairs++;
+                    document.getElementById('matches').textContent = matchedPairs;
+                    
+                    document.querySelector(`[data-row="${first.row}"][data-col="${first.col}"]`).classList.remove('selected');
+                    
+                    setTimeout(() => {
+                        renderGrid();
+                        
+                        if (matchedPairs === emojis.length) {
+                            clearInterval(timerInterval);
+                            alert(`🎉 恭喜完成！\n\n用时：${timer} 秒\n配对：${matchedPairs} 对\n\n太厉害了！🌟`);
+                        }
+                    }, 300);
+                } else {
+                    document.querySelector(`[data-row="${first.row}"][data-col="${first.col}"]`).classList.remove('selected');
+                }
+                
+                selectedCells = [];
+            }
+        }
+
+        function goBack() {
+            window.location.href = '../games.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
